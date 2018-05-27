@@ -241,6 +241,12 @@ export class GalleryComponent implements OnInit {
         x => !x.path.startsWith(event)
       );
 
+      //create paginators
+      this.createPaginator();
+
+      //assign pageNumbers
+      this.setupPageNumbersAndVisible();
+
       this.notifySettingsUpdated();
     }
   }

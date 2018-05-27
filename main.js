@@ -28,7 +28,7 @@ function createWindow() {
   );
 
   // Open the DevTools optionally:
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   win.on('closed', () => {
     win = null;
