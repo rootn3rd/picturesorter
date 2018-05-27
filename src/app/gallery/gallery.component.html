@@ -1,0 +1,58 @@
+<main role="main">
+
+  <app-folder-path (addClick)="handleAddClick($event)" (remove)="handleRemove($event)" (export)="export($event)" [folderLocations]="folderLocations"
+    [destPath]="exportLocation"></app-folder-path>
+
+  <div class="row justify-content-center" *ngIf="showNotification">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <span [innerHTML]="numExportFiles"></span> exported to
+      <span [innerHTML]="exportLocation"></span> successfully.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="dismissNotification()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="album py-5 bg-light">
+    <div class="container">
+      <div class="row">
+        <ng-container *ngFor="let item of galleryItems">
+          <div class="col-md-4 col-sm-2" *ngIf="item.isVisible">
+            <div class="card mb-4 shadow" (click)="handleClick(item)">
+              <i *ngIf="item.isSelected" class="fa fa-check"></i>
+              <i *ngIf="item.isExported" class="fa fa-save"></i>
+              <img class="card-img-top" [src]="item.imageSrc" alt="Card image cap">
+              <div class="card-body" *ngIf="item.text">
+                <p class="card-text">{{item.text}} - {{item.pageNumber}}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                  </div>
+                  <small class="text-muted">9 mins</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="row  justify-content-center " *ngIf="paginatorLength.length">
+        <ul class="pagination d-flex flex-wrap">
+          <li class="page-item" [ngClass]="{'disabled': isPreviousDisabled}">
+            <a class="page-link" (click)="gotoPrevious()">Previous</a>
+          </li>
+          <ng-container *ngFor="let index of paginatorLength">
+            <li class="page-item" [ngClass]="{'active': currentPage == index}">
+              <a class="page-link" (click)="gotoPage(index)" [innerHTML]="index"></a>
+            </li>
+          </ng-container>
+          <li class="page-item" [ngClass]="{'disabled': isNextDisabled}">
+            <a class="page-link" (click)="gotoNext()">Next</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</main>

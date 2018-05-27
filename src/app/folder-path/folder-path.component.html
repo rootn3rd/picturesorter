@@ -1,0 +1,46 @@
+<div class="container justify-content-center">
+  <div class="row mt-2">
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let loc of folderLocations">
+        {{loc}}
+        <button class="btn btn-outline-secondary" type="button" (click)="remove.emit(loc)">
+          <i class="fa fa-trash"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+
+
+  <div class="row mt-2">
+
+    <form class="form-inline justify-content-center">
+      <div class="input-group">
+        <input type="text" #location class="form-control" placeholder="Enter folder path.." aria-label="Enter folder path.." aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" (click)="addClick.emit(location.value)">
+            <i class="fa fa-plus"></i> Add
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row mt-2 mb-2">
+    <form class="form-inline justify-content-center">
+      <div class="input-group">
+        <input type="text" #exportInput class="form-control" placeholder="Enter destination path.." aria-label="Enter destination path.."
+          [(ngModel)]="destPath" [ngModelOptions]="{standalone: true}" (keyup)="onValueChange($event.target.value)" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <button class="btn btn-outline-success" (click)="export.emit(exportInput.value)">
+            <i class="fa fa-copy"></i> Export
+          </button>
+        </div>
+      </div>
+    </form>
+
+
+
+  </div>
+
+
+</div>
