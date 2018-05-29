@@ -15,8 +15,8 @@
 
   <div class="album py-5 bg-light">
     <div class="container">
-      <div class="row">
-        <ng-container *ngFor="let item of galleryItems">
+      <div class="row" [@galleryItemAnimation]="visibleGalleryItems.length">
+        <ng-container *ngFor="let item of visibleGalleryItems">
           <div class="col-md-4 col-sm-2" *ngIf="item.isVisible">
             <div class="card mb-4 shadow" (click)="handleClick(item)">
               <i *ngIf="item.isSelected" class="fa fa-check"></i>

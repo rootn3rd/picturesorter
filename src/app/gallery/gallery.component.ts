@@ -1,11 +1,13 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import { galleryItemAnimation, cardAnimation } from '../animations/animations';
+import { ElectronWrapperService } from '../services/electronWrapper.service';
 @Component({
   selector: 'app-gallery',
   templateUrl: './gallery.component.html',
-  styleUrls: ['./gallery.component.css']
+  styleUrls: ['./gallery.component.css'],
+  animations: [galleryItemAnimation, cardAnimation]
 })
 export class GalleryComponent implements OnInit {
   galleryItems = [];
@@ -20,23 +22,27 @@ export class GalleryComponent implements OnInit {
   exportLocation = '';
   showNotification = false;
 
+  visibleGalleryItems: Array<any> = [];
+
+  testState = 'true';
+  test() {
+    this.testState = this.testState == 'true' ? 'false' : 'true';
+  }
+
   constructor(
     private electronService: ElectronService,
     private ngZone: NgZone,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private electronWrapperService: ElectronWrapperService
   ) {}
 
   ngOnInit() {
-    // for (let i = 0; i < 9; i++) {
-    //   this.galleryItems.push({
-    //     imageSrc: '',
-    //     text: `This is a wider card with supporting text below as a natural lead-in to additional content. This content is
-    // a little bit longer. `
-    //   });
-    // }
-    if (this.electronService.isElectronApp) {
-      this.electronService.ipcRenderer.send('load_from_settings');
-      this.electronService.ipcRenderer.once('settings', (evnt, data) => {
+    this.electronWrapperService
+      .getDataOnce('load_from_settings', null, 'settings')
+      .then(result => {
+        let event = result.event;
+        let data = result.data;
+
         console.log(data);
         if (data) {
           this.ngZone.run(() => {
@@ -55,7 +61,6 @@ export class GalleryComponent implements OnInit {
           });
         }
       });
-    }
   }
 
   load() {
@@ -111,6 +116,29 @@ export class GalleryComponent implements OnInit {
       item.pageNumber = Math.floor(index / this.numElementsOnEachPage) + 1;
       item.isVisible = item.pageNumber == this.currentPage;
     });
+
+    this.refillVisibleGalleryItems();
+  }
+
+  refillVisibleGalleryItems() {
+    let needToChange = false;
+    if (!this.visibleGalleryItems.length) {
+      needToChange = true;
+    } else {
+      for (let i = 0; i < this.visibleGalleryItems.length; i++) {
+        if (this.visibleGalleryItems[i].pageNum !== this.currentPage) {
+          needToChange = true;
+          break;
+        }
+      }
+    }
+    if (needToChange) {
+      // this.visibleGalleryItems = [];
+
+      let visibleItems = this.galleryItems.filter(x => x.isVisible);
+
+      visibleItems.forEach(x => this.visibleGalleryItems.push(x));
+    }
   }
 
   createPaginator() {
@@ -130,6 +158,8 @@ export class GalleryComponent implements OnInit {
     this.galleryItems.forEach(x => {
       x.isVisible = x.pageNumber == this.currentPage;
     });
+
+    this.refillVisibleGalleryItems();
   }
   setupDisabled() {
     this.isNextDisabled = this.currentPage == this.numberOfPages;
